@@ -1,0 +1,60 @@
+name: Deploy
+
+# develop への push → stg (wakari-stg / Basic 認証あり)
+# main への push    → prd (wakari-prd / https://wakari.jp)
+on:
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PROJECT_NAME: ${{ github.ref_name == 'main' && 'wakari-prd' || 'wakari-stg' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      - name: Enable Basic auth (stg only)
+        if: github.ref_name == 'develop'
+        run: cp -R stg/functions functions
+
+      - name: Check Cloudflare credentials
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID が GitHub Secrets に設定されていません"
+            exit 1
+          fi
+
+      - name: Deploy to Cloudflare Pages
+        run: |
+          npx wrangler pages deploy public \
+            --project-name="$PROJECT_NAME" \
+            --branch="$GITHUB_REF_NAME" \
+            --commit-hash="$GITHUB_SHA" \
+            --commit-message="deploy ${GITHUB_SHA::7}" \
+            --commit-dirty=true
+
+      - name: Verify stg is behind Basic auth
+        if: github.ref_name == 'develop'
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' "https://${PROJECT_NAME}.pages.dev/")
+          echo "status=$status"
+          if [ "$status" != "401" ]; then
+            echo "::error::stg が Basic 認証なしで応答しています (HTTP $status)"
+            exit 1
+          fi
