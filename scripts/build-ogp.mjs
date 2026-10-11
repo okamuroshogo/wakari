@@ -19,8 +19,10 @@ const FONT_FAMILY = "Noto Sans JP";
 const BACKGROUND_FILE = join(ROOT, "assets", "ogp", "background.svg");
 
 const SITE_NAME = "日本の課題をわかりやすく解説";
-const TOP_TITLE = "日本の問題は、ひとつずつ\n起きているわけではありません。\nつながっています。";
+const TOP_TITLE = "日本の課題を\nわかりやすく解説\n「ワカリJP」";
 const TOP_LABEL = "wakari.jp";
+// トップの画像はタイトルがサイト名なので、左下にはサイト名ではなくキャッチを入れる
+const TOP_FOOTER = "63 の課題を、つながりで読む。";
 
 // ---------------------------------------------------------------------------
 // レイアウト
@@ -330,7 +332,7 @@ function loadBackground(file) {
   return m[1];
 }
 
-function composeSvg({ title, label, hue = DEFAULT_HUE, accentLastLine = false, article = false }, background, width) {
+function composeSvg({ title, label, hue = DEFAULT_HUE, accentLastLine = false, article = false, footer = SITE_NAME }, background, width) {
   const fitted = fitTitle(title, width, article);
   const { size, lines } = fitted;
   const lineH = size * LINE_HEIGHT;
@@ -341,7 +343,9 @@ function composeSvg({ title, label, hue = DEFAULT_HUE, accentLastLine = false, a
     .map((line, i) => {
       const y = top + i * lineH + (lineH - size) / 2 + size * CJK_ASCENT;
       const fill = accentLastLine && i === lines.length - 1 ? accent : ink;
-      return `<text x="${TEXT_X}" y="${y.toFixed(1)}" font-size="${size}" fill="${fill}">${esc(line)}</text>`;
+      // 「 で始まる行は、かっこの左の余白 (約半角分) だけ左に出して、ほかの行と字の左端をそろえる
+      const x = OPEN_BRACKETS.has(line[0]) && line[0] !== "(" && line[0] !== "[" ? TEXT_X - size * 0.5 : TEXT_X;
+      return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-size="${size}" fill="${fill}">${esc(line)}</text>`;
     })
     .join("\n    ");
 
@@ -367,7 +371,7 @@ function composeSvg({ title, label, hue = DEFAULT_HUE, accentLastLine = false, a
     <path d="M${mark.x - 9} ${mark.y + 8} L${mark.x + 9} ${mark.y - 8}" stroke="${accent}" stroke-width="5" stroke-linecap="round" />
     <circle cx="${mark.x - 9}" cy="${mark.y + 8}" r="8" fill="${accent}" />
     <circle cx="${mark.x + 9}" cy="${mark.y - 8}" r="8" fill="${hsl(hue, 70, 45)}" />
-    <text x="${TEXT_X + 46}" y="${(FOOTER_Y + nameSize * 0.33).toFixed(1)}" font-size="${nameSize}" fill="${ink}">${esc(SITE_NAME)}</text>
+    <text x="${TEXT_X + 46}" y="${(FOOTER_Y + nameSize * 0.33).toFixed(1)}" font-size="${nameSize}" fill="${ink}">${esc(footer)}</text>
   </g>
   <g>
     <rect x="${labelX.toFixed(1)}" y="${FOOTER_Y - labelH / 2}" width="${labelW.toFixed(1)}" height="${labelH}" rx="${labelH / 2}" fill="${hsl(hue, 70, 94)}" />
@@ -406,7 +410,7 @@ function main() {
 
   // file はページの URL から決まる: "/" → index.png、"/issues/<slug>/" → issues/<slug>.png
   const targets = [
-    { file: "index.png", title: TOP_TITLE, label: TOP_LABEL, accentLastLine: true },
+    { file: "index.png", title: TOP_TITLE, label: TOP_LABEL, accentLastLine: true, footer: TOP_FOOTER },
     { file: "issues.png", title: "課題一覧", label: `${issues.length} の課題` },
     { file: "about.png", title: "このサイトについて", label: "編集方針と参加方法" },
     ...issues.map((issue) => ({
