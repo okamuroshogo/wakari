@@ -11,6 +11,7 @@ import { Resvg } from "@resvg/resvg-js";
 
 const ROOT = join(import.meta.dirname, "..");
 const DATA_DIR = join(ROOT, "data");
+const CONTENT_DIR = join(ROOT, "content", "issues");
 const OUT_DIR = process.env.WAKARI_OUT_DIR || join(ROOT, "public");
 const OGP_DIR = join(OUT_DIR, "ogp");
 const FONT_FILE = join(ROOT, "assets", "fonts", "NotoSansJP-Bold.otf");
@@ -40,6 +41,14 @@ const FOOTER_Y = CARD.y + CARD.h - 56; // フッターの上下中央
 const TITLE_SIZES = [104, 96, 88, 80, 72, 64, 56, 48, 42];
 const LINE_HEIGHT = 1.32;
 const MAX_LINES = 4;
+// 記事の h1 に使う文字サイズ。画像ごとの差が大きくならないように範囲をしぼる
+const SPLIT_TITLE_SIZES = [72, 64, 56];
+// 各部分が 1 行に収まらず折り返すときは、これ以下のサイズにして 1 行に入る字数を確保する
+const SPLIT_TITLE_WRAPPED_MAX = 64;
+// かっこの中で折り返すときの減点
+const INSIDE_BRACKET_PENALTY = 40;
+const OPEN_BRACKETS = new Set("「『（(［[【〈《");
+const CLOSE_BRACKETS = new Set("」』）)］]】〉》");
 // 漢字・かなの字面は、ベースラインから上に 0.88em、下に 0.12em
 const CJK_ASCENT = 0.88;
 
@@ -129,6 +138,10 @@ const NO_LINE_END = new Set("「『（［｛〈《【〔‘“([{");
 const KANJI_PREFIX = new Set("再非不未無低高新旧全各超反被両総偽");
 const HIRAGANA_ONLY = /^\p{sc=Hiragana}+$/u;
 const HIRAGANA_END = /\p{sc=Hiragana}$/u;
+const PUNCTUATION_END = /[\s・、。，．：；？！,.!?:;]$/;
+const CLAUSE_END = /[、。，．]$/;
+const HIRAGANA_START = /^\p{sc=Hiragana}/u;
+const DIGIT_START = /^[0-9０-９]/;
 const KANJI_ONLY = /^[\p{sc=Han}々]$/u;
 const KANJI_END = /[\p{sc=Han}々]$/u;
 const KANJI_OR_KATAKANA_START = /^[\p{sc=Han}\p{sc=Katakana}]/u;
@@ -172,22 +185,28 @@ function unbreakableUnits(text) {
     words,
     (part, prev) =>
       (KATAKANA_START.test(part) && KATAKANA_END.test(prev)) ||
-      (part.length <= 2 && HIRAGANA_ONLY.test(part) && prev.trim() !== "") ||
+      (part.length <= 2 && HIRAGANA_ONLY.test(part) && prev.trim() !== "" && !PUNCTUATION_END.test(prev)) ||
       (KANJI_ONLY.test(part) && (KANJI_END.test(prev) || DIGIT_END.test(prev))),
   );
 }
 
-// かたまりの後ろで折り返すときの減点。区切り記号の後ろ < 助詞の後ろ < 語と語の間
-function breakPenalty(unit) {
+// unit と next の間で折り返すときの減点。区切り記号の後ろ < 助詞の後ろ < 語と語の間。
+// ひらがなで始まる行 (「どれ / くらい」「化学物質 / による」) は、語や文節の途中になりやすいので強く避ける。
+// 数字の前 (「3.6人に / 1人」) は、数のまとまりが分かれるので少し避ける。
+function breakPenalty(unit, next = "") {
+  // 読点・句点の後ろは、行の長さが少し不ぞろいになっても優先する
+  if (CLAUSE_END.test(unit)) return -6;
   if (GOOD_BREAK_AFTER.test(unit)) return 0;
-  return HIRAGANA_END.test(unit) ? 3 : 16;
+  if (HIRAGANA_START.test(next)) return 40;
+  if (!HIRAGANA_END.test(unit)) return 16;
+  return DIGIT_START.test(next) ? 16 : 3;
 }
 
 // units を maxEm (em 単位の幅) に収まる最少の行数に分ける。
 // 同じ行数の分け方のうち、切れ目の減点が小さく、各行の長さがそろうものを選ぶ。
 function breakLines(units, maxEm, width) {
   const n = units.length;
-  if (n === 0) return [];
+  if (n === 0) return { lines: [], penalty: 0 };
   const lineAt = (from, to) => units.slice(from, to).join("").trim();
 
   // 前から詰めていくと、最少の行数がわかる
@@ -201,7 +220,15 @@ function breakLines(units, maxEm, width) {
 
   // best[i] = units[0..i) を k 行に分けたときの最小コスト
   const mean = width(lineAt(0, n)) / count;
-  let best = Array.from({ length: n + 1 }, (_, i) => (i === 0 ? { cost: 0, lines: [] } : null));
+  // depth[i] = units[0..i) の後ろで、まだ閉じていないかっこの数。かっこの中では折り返しにくくする
+  const depth = [0];
+  for (const unit of units) {
+    const opened = [...unit].filter((ch) => OPEN_BRACKETS.has(ch)).length;
+    const closed = [...unit].filter((ch) => CLOSE_BRACKETS.has(ch)).length;
+    depth.push(Math.max(0, depth.at(-1) + opened - closed));
+  }
+  const penaltyAt = (to) => (to < n ? breakPenalty(units[to - 1], units[to]) + (depth[to] > 0 ? INSIDE_BRACKET_PENALTY : 0) : 0);
+  let best = Array.from({ length: n + 1 }, (_, i) => (i === 0 ? { cost: 0, penalty: 0, lines: [] } : null));
   for (let k = 1; k <= count; k++) {
     const next = Array.from({ length: n + 1 }, () => null);
     for (let to = 1; to <= n; to++) {
@@ -210,36 +237,58 @@ function breakLines(units, maxEm, width) {
         const w = width(line);
         if (w > maxEm && to - from > 1) break;
         if (!best[from]) continue;
-        const cost = best[from].cost + (w - mean) ** 2 + (to < n ? breakPenalty(units[to - 1]) : 0);
-        if (!next[to] || cost < next[to].cost) next[to] = { cost, lines: [...best[from].lines, line] };
+        const penalty = penaltyAt(to);
+        const cost = best[from].cost + (w - mean) ** 2 + penalty;
+        if (!next[to] || cost < next[to].cost) {
+          next[to] = { cost, penalty: best[from].penalty + penalty, lines: [...best[from].lines, line] };
+        }
       }
     }
     best = next;
   }
-  return best[n].lines.filter((line) => line !== "");
+  return { lines: best[n].lines.filter((line) => line !== ""), penalty: best[n].penalty };
 }
 
 // maxEm に収まるように折り返す。"\n" は必ず改行する。
 // forced は、1 行に入らない長い語を文字単位で切ったかどうか (禁則は守る)。
+// penalty は、折り返した位置の減点の合計 (小さいほど読みやすい切れ目)。
 function wrapText(text, maxEm, width) {
   const lines = [];
   let forced = false;
+  let penalty = 0;
   for (const paragraph of text.split("\n")) {
     const units = unbreakableUnits(paragraph).flatMap((unit) => {
       if (width(unit.trim()) <= maxEm) return [unit];
       forced = true;
       return joinForbidden([...graphemeSegmenter.segment(unit)].map((s) => s.segment));
     });
-    lines.push(...breakLines(units, maxEm, width));
+    const broken = breakLines(units, maxEm, width);
+    lines.push(...broken.lines);
+    penalty += broken.penalty;
   }
-  return { lines, forced };
+  return { lines, forced, penalty };
 }
 
 // タイトルの文字サイズと行を決める。大きいサイズから試し、幅と高さの両方に収まったものを返す。
 // まず語の途中で切らずに済むサイズを探し、なければ語の途中で切ることを許す。
-function fitTitle(title, width) {
+function fitTitle(title, width, article = false) {
   const fits = (size, lines) =>
     lines.length <= MAX_LINES && lines.length * size * LINE_HEIGHT <= TITLE_H && lines.every((l) => width(l) * size <= TEXT_W);
+  // 記事の h1 (article) は、文字サイズを SPLIT_TITLE_SIZES にそろえる。
+  // まず、分けた各部分が 1 行に収まるサイズを探す。なければ折り返すが、いちばん大きいサイズではなく、
+  // 切れ目がいちばん自然になるサイズを選ぶ (大きさを優先すると「どれ / くらい」のように読みにくい位置で折れる)。
+  const paragraphs = title.split("\n").length;
+  if (article) {
+    const candidates = SPLIT_TITLE_SIZES.map((size) => ({ size, ...wrapText(title, TEXT_W / size, width) })).filter(
+      (c) => !c.forced && fits(c.size, c.lines),
+    );
+    const unwrapped = candidates.find((c) => c.lines.length === paragraphs);
+    if (unwrapped) return { size: unwrapped.size, lines: unwrapped.lines, truncated: false };
+    const wrapped = candidates
+      .filter((c) => c.size <= SPLIT_TITLE_WRAPPED_MAX)
+      .sort((a, b) => a.lines.length - b.lines.length || a.penalty - b.penalty || b.size - a.size)[0];
+    if (wrapped) return { size: wrapped.size, lines: wrapped.lines, truncated: false };
+  }
   for (const allowForced of [false, true]) {
     for (const size of TITLE_SIZES) {
       const { lines, forced } = wrapText(title, TEXT_W / size, width);
@@ -281,8 +330,8 @@ function loadBackground(file) {
   return m[1];
 }
 
-function composeSvg({ title, label, hue = DEFAULT_HUE, accentLastLine = false }, background, width) {
-  const fitted = fitTitle(title, width);
+function composeSvg({ title, label, hue = DEFAULT_HUE, accentLastLine = false, article = false }, background, width) {
+  const fitted = fitTitle(title, width, article);
   const { size, lines } = fitted;
   const lineH = size * LINE_HEIGHT;
   const top = TITLE_TOP + (TITLE_H - lines.length * lineH) / 2;
@@ -338,6 +387,16 @@ function readJson(name) {
   return data;
 }
 
+// 課題ページの画像に入れるタイトル。記事があればその h1 (article: true)、なければ課題名。
+// h1 は「少子化とは？ 日本で何が起きているのか」のように前半と後半に分かれているので、最初の文末で必ず改行する。
+function issueTitle(issue) {
+  const file = join(CONTENT_DIR, `${issue.slug}.json`);
+  if (!existsSync(file)) return { title: issue.title };
+  const h1 = JSON.parse(readFileSync(file, "utf8")).h1;
+  if (typeof h1 !== "string" || h1.trim() === "") return { title: issue.title };
+  return { title: h1.trim().replace(/([？?。！!])[ \u3000]*(?=.)/u, "$1\n"), article: true };
+}
+
 function main() {
   const started = performance.now();
   const issues = readJson("issues.json");
@@ -352,7 +411,7 @@ function main() {
     { file: "about.png", title: "このサイトについて", label: "編集方針と参加方法" },
     ...issues.map((issue) => ({
       file: `issues/${issue.slug}.png`,
-      title: issue.title,
+      ...issueTitle(issue),
       label: categoryBySlug.get(issue.category)?.name ?? "課題",
       hue: CATEGORY_HUES[issue.category],
     })),
@@ -369,7 +428,7 @@ function main() {
 
   if (process.argv.includes("--list")) {
     for (const target of targets) {
-      const { size, lines } = fitTitle(target.title, metrics.width);
+      const { size, lines } = fitTitle(target.title, metrics.width, target.article);
       console.log(`${target.file}\t${size}px\t${lines.join(" / ")}\t[${target.label}]`);
     }
     return;

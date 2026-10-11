@@ -140,7 +140,7 @@ SNS で共有されたときに出る画像 (OGP 画像) だけを作り直す�
 - `data/` — 課題 (`issues.json`)、カテゴリ (`categories.json`)、横断タグ (`tags.json`) の一覧
 - `content/issues/<slug>.json` — 課題ごとの解説記事。ファイルがない課題は「準備中」ページになる
 - `scripts/build.mjs` — `data/` と `content/` を検証して、`public/` に HTML・`sitemap.xml`・`robots.txt` を生成する
-- `scripts/build-ogp.mjs` — ページごとの OGP 画像 (1200×630 の PNG) を `public/ogp/` に生成する。課題名やカテゴリ名を `data/` から読み、背景の上に重ねる
+- `scripts/build-ogp.mjs` — ページごとの OGP 画像 (1200×630 の PNG) を `public/ogp/` に生成する。記事の見出し (`h1`) やカテゴリ名を `content/` と `data/` から読み、背景の上に重ねる
 - `assets/ogp/background.svg` — OGP 画像の背景 (このサイト用に描いたオリジナル)。`assets/fonts/` — 画像の文字に使う [Noto Sans JP](https://github.com/notofonts/noto-cjk) Bold ([SIL Open Font License 1.1](./assets/fonts/OFL.txt))
 - `src/styles.css` — [Tailwind CSS](https://tailwindcss.com/) の入力ファイル
 - `public/` — 公開されるファイル。HTML と `ogp/` の画像は生成物なので git 管理外 (**手で編集しない**)。手で置くのは `_headers` と `assets/issues-filter.js` だけ

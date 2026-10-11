@@ -31,8 +31,9 @@ AI エージェント (Claude Code / Codex など) と人間の両方に向け�
 - `scripts/build.mjs` … データを検証し、`public/` に全ページ・`sitemap.xml`・`robots.txt` を生成する。検証に失敗すると exit 1
 - `scripts/build-ogp.mjs` … ページごとの OGP 画像 (1200x630 PNG) を `public/ogp/` に生成する。`assets/ogp/background.svg` (背景) の上に白いカード・タイトル・サイト名・カテゴリ名を SVG で重ね、resvg で PNG にする。タイトルの折り返し (禁則) と文字サイズの調整は自前。ヘッドレスブラウザは使わない
   - 画像のパスはページの URL から決まる: `/` → `/ogp/index.png`、`/issues/<slug>/` → `/ogp/issues/<slug>.png` (`build.mjs` の `ogImageUrl()` と同じ規則。変えるときは両方直す)
-  - 課題ページの画像に入れるのは記事の `h1` ではなく `data/issues.json` の `title`。`og:title` / `og:description` は、記事ありなら `h1` / `lead`、準備中なら `title` / `summary`
-  - `node scripts/build-ogp.mjs --list` で、全タイトルの文字サイズと折り返しを画像なしで確認できる。課題名を足したり変えたりしたら見ておく
+  - 課題ページの画像に入れるのは、記事があればその `h1` (「少子化とは？ 日本で何が起きているのか」)、準備中なら `data/issues.json` の `title`。`og:title` / `og:description` も同じく、記事ありなら `h1` / `lead`、準備中なら `title` / `summary`
+  - `h1` は最初の「？」「。」の後ろで必ず改行し、文字サイズは 72 / 64 / 56px のどれかにそろえる。前半・後半が 1 行ずつに収まらないときは 64px 以下で折り返し、切れ目がいちばん自然になる組み方を選ぶ
+  - `node scripts/build-ogp.mjs --list` で、全タイトルの文字サイズと折り返しを画像なしで確認できる。記事の `h1` や課題名を足したり変えたりしたら見ておく
 - `assets/ogp/background.svg` … OGP 画像の背景 (タイトルなし、オリジナル)。写真や他者の素材・ロゴを入れない
 - `assets/fonts/NotoSansJP-Bold.otf` … OGP 画像用のフォント (SIL OFL 1.1、ライセンス文は同じ場所の `OFL.txt`)。[notofonts/noto-cjk](https://github.com/notofonts/noto-cjk) の `Sans/SubsetOTF/JP/` から取得したものをそのまま置いている。CI (ubuntu-latest) には日本語フォントがないので、システムフォントには頼らない
 - `public/` … 公開されるファイル。**HTML・`sitemap.xml`・`robots.txt`・`assets/styles.css`・`ogp/` は生成物で git 管理外。手で編集しない。** 手書きは `_headers`、`assets/issues-filter.js` (/issues/ の絞り込み)、favicon (`favicon.svg` `favicon.ico` `apple-touch-icon.png`) だけ
