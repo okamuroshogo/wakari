@@ -9,7 +9,9 @@
 
 @layer base {
   /* 和文組み: 行頭・行末の禁則を厳しめにし、見出しは文節で折り返す */
+  /* このサイトはライトテーマだけ。ダークテーマは作らない (AGENTS.md 参照) */
   html {
+    color-scheme: only light;
     line-break: strict;
     overflow-wrap: anywhere;
     scroll-behavior: smooth;

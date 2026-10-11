@@ -338,27 +338,27 @@ const ogImageUrl = (path) => `${SITE.origin}/ogp${path.replace(/\/$/, "") || "/i
 const C = {
   container: "mx-auto w-full max-w-5xl px-5 sm:px-8",
   prose: "mx-auto w-full max-w-3xl px-5 sm:px-8",
-  eyebrow: "text-sm font-medium text-emerald-700 dark:text-emerald-400",
-  muted: "text-stone-600 dark:text-stone-400",
-  link: "underline decoration-stone-300 underline-offset-4 hover:decoration-emerald-600 dark:decoration-stone-600 dark:hover:decoration-emerald-400",
-  card: "rounded-2xl border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900",
+  eyebrow: "text-sm font-medium text-emerald-700",
+  muted: "text-stone-600",
+  link: "underline decoration-stone-300 underline-offset-4 hover:decoration-emerald-600",
+  card: "rounded-2xl border border-stone-200 bg-white",
   cardHover:
-    "transition-colors hover:border-emerald-600 focus-within:border-emerald-600 dark:hover:border-emerald-500 dark:focus-within:border-emerald-500",
-  chip: "inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-3.5 py-1.5 text-sm text-stone-700 hover:border-emerald-600 hover:text-emerald-800 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300 dark:hover:border-emerald-500 dark:hover:text-emerald-300",
+    "transition-colors hover:border-emerald-600 focus-within:border-emerald-600",
+  chip: "inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-3.5 py-1.5 text-sm text-stone-700 hover:border-emerald-600 hover:text-emerald-800",
   chipActive:
-    "aria-selected:border-stone-900 aria-selected:bg-stone-900 aria-selected:text-white aria-pressed:border-emerald-700 aria-pressed:bg-emerald-700 aria-pressed:text-white dark:aria-selected:border-stone-100 dark:aria-selected:bg-stone-100 dark:aria-selected:text-stone-900 dark:aria-pressed:border-emerald-400 dark:aria-pressed:bg-emerald-400 dark:aria-pressed:text-stone-950",
+    "aria-selected:border-stone-900 aria-selected:bg-stone-900 aria-selected:text-white aria-pressed:border-emerald-700 aria-pressed:bg-emerald-700 aria-pressed:text-white",
   h2: "text-2xl leading-snug font-bold tracking-tight",
-  sectionTop: "border-t border-stone-200 dark:border-stone-800",
+  sectionTop: "border-t border-stone-200",
   buttonPrimary:
-    "inline-block rounded-full bg-stone-900 px-6 py-3 text-sm font-medium text-white hover:bg-stone-700 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-stone-300",
+    "inline-block rounded-full bg-stone-900 px-6 py-3 text-sm font-medium text-white hover:bg-stone-700",
   buttonSecondary:
-    "inline-block rounded-full border border-stone-300 px-6 py-3 text-sm font-medium hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-900",
+    "inline-block rounded-full border border-stone-300 px-6 py-3 text-sm font-medium hover:bg-stone-100",
 };
 
 function statusBadge(issue) {
   return hasArticle(issue)
-    ? `<span class="shrink-0 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">記事あり</span>`
-    : `<span class="shrink-0 rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600 dark:bg-stone-800 dark:text-stone-400">準備中</span>`;
+    ? `<span class="shrink-0 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800">記事あり</span>`
+    : `<span class="shrink-0 rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600">準備中</span>`;
 }
 
 // 課題カード。カード全体がリンクになる。
@@ -386,7 +386,7 @@ function tagChips(list, { count = true } = {}) {
   return `<ul class="flex flex-wrap gap-2">${list
     .map((tag) => {
       const n = issues.filter((i) => (i.tags ?? []).includes(tag.slug)).length;
-      return `<li><a href="${tagUrl(tag)}" class="${C.chip}" title="${esc(tag.description)}"><span aria-hidden="true" class="text-emerald-700 dark:text-emerald-400">#</span>${esc(tag.name)}${
+      return `<li><a href="${tagUrl(tag)}" class="${C.chip}" title="${esc(tag.description)}"><span aria-hidden="true" class="text-emerald-700">#</span>${esc(tag.name)}${
         count ? `<span class="text-xs text-stone-500">${n}</span>` : ""
       }</a></li>`;
     })
@@ -398,10 +398,10 @@ function breadcrumb(items) {
   <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
     ${items
       .map((item, i) => {
-        const sep = i > 0 ? `<span aria-hidden="true" class="mr-2 text-stone-400 dark:text-stone-600">/</span>` : "";
+        const sep = i > 0 ? `<span aria-hidden="true" class="mr-2 text-stone-400">/</span>` : "";
         return item.url
           ? `<li>${sep}<a href="${item.url}" class="hover:underline underline-offset-4">${esc(item.name)}</a></li>`
-          : `<li aria-current="page">${sep}<span class="text-stone-900 dark:text-stone-100">${esc(item.name)}</span></li>`;
+          : `<li aria-current="page">${sep}<span class="text-stone-900">${esc(item.name)}</span></li>`;
       })
       .join("\n    ")}
   </ol>
@@ -446,7 +446,7 @@ function layout({
   const ogImageAlt = ogTitle.includes(SITE.name) ? ogTitle : `${ogTitle} — ${SITE.name}`;
   const navLinks = NAV.map(
     (item) =>
-      `<li><a href="${item.href}"${item.key === nav ? ' aria-current="page"' : ""} class="inline-block py-1 text-stone-600 underline-offset-4 hover:text-stone-900 hover:underline aria-[current=page]:font-bold aria-[current=page]:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 dark:aria-[current=page]:text-stone-100">${esc(item.label)}</a></li>`,
+      `<li><a href="${item.href}"${item.key === nav ? ' aria-current="page"' : ""} class="inline-block py-1 text-stone-600 underline-offset-4 hover:text-stone-900 hover:underline aria-[current=page]:font-bold aria-[current=page]:text-stone-900">${esc(item.label)}</a></li>`,
   ).join("\n          ");
   const ld = jsonLd
     .map((data) => `<script type="application/ld+json">${JSON.stringify(data).replaceAll("<", "\\u003c")}</script>`)
@@ -456,6 +456,7 @@ function layout({
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="only light" />
     <title>${esc(title)}</title>
     <meta name="description" content="${esc(description)}" />
     ${noindex ? `<meta name="robots" content="noindex" />` : `<link rel="canonical" href="${esc(url)}" />`}
@@ -475,12 +476,16 @@ function layout({
     <meta name="twitter:description" content="${esc(ogDescription)}" />
     <meta name="twitter:image" content="${esc(ogImage)}" />
     <meta name="twitter:image:alt" content="${esc(ogImageAlt)}" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#059669" />
     <link rel="stylesheet" href="/assets/styles.css" />
     ${ld}
   </head>
-  <body class="flex min-h-screen flex-col bg-stone-50 font-sans text-stone-900 antialiased dark:bg-stone-950 dark:text-stone-100">
+  <body class="flex min-h-screen flex-col bg-stone-50 font-sans text-stone-900 antialiased">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-10 focus:rounded-full focus:bg-stone-900 focus:px-4 focus:py-2 focus:text-sm focus:text-white">本文へ移動</a>
-    <header class="border-b border-stone-200 dark:border-stone-800">
+    <header class="border-b border-stone-200">
       <div class="${C.container} flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-4">
         <a href="/" class="text-xl font-bold tracking-tight">${esc(SITE.name)}</a>
         <nav aria-label="サイト内メニュー">
@@ -495,7 +500,7 @@ function layout({
 ${body}
     </main>
 
-    <footer class="mt-20 border-t border-stone-200 dark:border-stone-800">
+    <footer class="mt-20 border-t border-stone-200">
       <div class="${C.container} grid gap-8 py-10 text-sm sm:grid-cols-[2fr_1fr_1fr]">
         <div>
           <p class="text-base font-bold">${esc(SITE.name)}</p>
@@ -533,7 +538,7 @@ function pageHeader({ crumbs, eyebrow, h1, lead }) {
       <div class="${C.container} pt-10 pb-10 sm:pt-14">
         ${eyebrow ? `<p class="${C.eyebrow}">${esc(eyebrow)}</p>` : ""}
         <h1 class="mt-3 text-3xl leading-tight font-bold tracking-tight sm:text-4xl">${esc(h1)}</h1>
-        <p class="mt-5 max-w-3xl text-base leading-8 text-stone-700 sm:text-lg sm:leading-9 dark:text-stone-300">${esc(lead)}</p>
+        <p class="mt-5 max-w-3xl text-base leading-8 text-stone-700 sm:text-lg sm:leading-9">${esc(lead)}</p>
       </div>`;
 }
 
@@ -551,13 +556,13 @@ function createArticleRenderer(article) {
       .replace(
         CITE_RE,
         (_, id) =>
-          `<sup class="ml-0.5 text-xs leading-none"><a href="#src-${id}" class="text-emerald-700 hover:underline dark:text-emerald-400" aria-label="出典 ${sourceNo.get(id)}">[${sourceNo.get(id)}]</a></sup>`,
+          `<sup class="ml-0.5 text-xs leading-none"><a href="#src-${id}" class="text-emerald-700 hover:underline" aria-label="出典 ${sourceNo.get(id)}">[${sourceNo.get(id)}]</a></sup>`,
       );
 
   const sourceLine = (id) => {
     if (!id) return "";
     const s = sourceById.get(id);
-    return `<p class="mt-3 text-xs leading-6 text-stone-500 dark:text-stone-400">出典: <a href="#src-${id}" class="${C.link}">${esc(s.org)}「${esc(s.title)}」</a></p>`;
+    return `<p class="mt-3 text-xs leading-6 text-stone-500">出典: <a href="#src-${id}" class="${C.link}">${esc(s.org)}「${esc(s.title)}」</a></p>`;
   };
 
   const figure = (block, inner) => `<figure class="mt-8 p-5 ${C.card}">
@@ -580,13 +585,13 @@ function createArticleRenderer(article) {
         block,
         `<div class="-mx-5 overflow-x-auto px-5">
     <table class="w-full min-w-max border-collapse text-left text-sm">
-      <thead><tr class="border-b border-stone-300 dark:border-stone-700">${block.head
+      <thead><tr class="border-b border-stone-300">${block.head
         .map((h) => `<th scope="col" class="py-2 pr-6 font-bold whitespace-nowrap last:pr-0">${inline(h)}</th>`)
         .join("")}</tr></thead>
       <tbody>${block.rows
         .map(
           (row) =>
-            `<tr class="border-b border-stone-200 last:border-0 dark:border-stone-800">${row
+            `<tr class="border-b border-stone-200 last:border-0">${row
               .map((cell, i) =>
                 i === 0
                   ? `<th scope="row" class="py-2 pr-6 font-medium whitespace-nowrap">${inline(cell)}</th>`
@@ -609,7 +614,7 @@ function createArticleRenderer(article) {
           const width = Math.max(0, Math.min(100, (Math.abs(it.value) / max) * 100)).toFixed(1);
           return `<li class="col-span-3 grid grid-cols-subgrid items-center">
       <span class="${C.muted}">${inline(it.label)}</span>
-      <span aria-hidden="true" class="block h-4 rounded-sm bg-stone-100 dark:bg-stone-800"><span class="block h-4 min-w-0.5 rounded-sm bg-emerald-600 dark:bg-emerald-500" style="width:${width}%"></span></span>
+      <span aria-hidden="true" class="block h-4 rounded-sm bg-stone-100"><span class="block h-4 min-w-0.5 rounded-sm bg-emerald-600" style="width:${width}%"></span></span>
       <span class="text-right font-bold whitespace-nowrap tabular-nums">${esc(formatNumber(it.value))}${unit ? `<span class="ml-0.5 text-xs font-normal">${unit}</span>` : ""}</span>
     </li>`;
         })
@@ -621,21 +626,21 @@ function createArticleRenderer(article) {
 }
 
 function flowDiagram(flow, issue, inline) {
-  const arrow = `<li aria-hidden="true" class="flex justify-center text-xl leading-none text-emerald-600 sm:items-center dark:text-emerald-400"><span class="sm:hidden">↓</span><span class="hidden sm:inline">→</span></li>`;
+  const arrow = `<li aria-hidden="true" class="flex justify-center text-xl leading-none text-emerald-600 sm:items-center"><span class="sm:hidden">↓</span><span class="hidden sm:inline">→</span></li>`;
   const items = flow
     .map((step) => {
       const current = plain(step) === issue.title;
       return `<li class="flex flex-1 items-center justify-center rounded-xl border px-4 py-3 text-center text-sm leading-6 font-medium ${
         current
-          ? "border-emerald-600 bg-emerald-50 text-emerald-900 dark:border-emerald-500 dark:bg-emerald-950 dark:text-emerald-100"
-          : "border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900"
+          ? "border-emerald-600 bg-emerald-50 text-emerald-900"
+          : "border-stone-200 bg-white"
       }"${current ? ' aria-current="true"' : ""}>${inline(step)}</li>`;
     })
     .join(arrow);
   return `<section aria-labelledby="flow-heading" class="mt-10">
   <h2 id="flow-heading" class="text-sm font-bold">原因から影響までの流れ</h2>
   <ol class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-stretch">${items}</ol>
-  <p class="mt-3 text-xs leading-6 text-stone-500 dark:text-stone-400">矢印は、統計的に証明された因果関係ではなく、主な伝わり方を示しています。</p>
+  <p class="mt-3 text-xs leading-6 text-stone-500">矢印は、統計的に証明された因果関係ではなく、主な伝わり方を示しています。</p>
 </section>`;
 }
 
@@ -724,9 +729,9 @@ function publishedIssuePage(issue, article) {
       html: `<div class="mt-6 space-y-4">${article.misconceptions
         .map(
           (m) => `<div class="p-5 ${C.card}">
-  <p class="text-xs font-bold text-stone-500 dark:text-stone-400">よくある誤解</p>
+  <p class="text-xs font-bold text-stone-500">よくある誤解</p>
   <p class="mt-1 text-lg leading-8 font-bold">「${r.inline(m.myth)}」</p>
-  <p class="mt-4 text-xs font-bold text-emerald-700 dark:text-emerald-400">実際は</p>
+  <p class="mt-4 text-xs font-bold text-emerald-700">実際は</p>
   <p class="mt-1 leading-8">${r.inline(m.fact)}</p>
 </div>`,
         )
@@ -742,11 +747,11 @@ function publishedIssuePage(issue, article) {
   <h3 class="text-lg leading-snug font-bold">${r.inline(o.name)}</h3>
   <dl class="mt-4 grid gap-4 sm:grid-cols-2">
     <div>
-      <dt class="text-xs font-bold text-emerald-700 dark:text-emerald-400">期待できること</dt>
+      <dt class="text-xs font-bold text-emerald-700">期待できること</dt>
       <dd class="mt-1 text-sm leading-7">${r.inline(o.pros)}</dd>
     </div>
     <div>
-      <dt class="text-xs font-bold text-stone-500 dark:text-stone-400">負担・副作用</dt>
+      <dt class="text-xs font-bold text-stone-500">負担・副作用</dt>
       <dd class="mt-1 text-sm leading-7">${r.inline(o.cons)}</dd>
     </div>
   </dl>
@@ -757,7 +762,7 @@ function publishedIssuePage(issue, article) {
     {
       id: "indicators",
       title: "これから見るべき指標",
-      html: `<dl class="mt-6 divide-y divide-stone-200 border-y border-stone-200 dark:divide-stone-800 dark:border-stone-800">${article.indicators
+      html: `<dl class="mt-6 divide-y divide-stone-200 border-y border-stone-200">${article.indicators
         .map(
           (ind) => `<div class="py-4">
   <dt class="font-bold">${r.inline(ind.name)}</dt>
@@ -778,11 +783,11 @@ function publishedIssuePage(issue, article) {
       html: `<p class="mt-5 text-sm leading-7 ${C.muted}">データ確認日: <time datetime="${esc(article.updated)}">${formatDate(article.updated)}</time></p>
 <ol class="mt-4 space-y-4 text-sm leading-7">${article.sources
         .map(
-          (s) => `<li id="src-${s.id}" class="flex scroll-mt-6 gap-3 rounded-lg target:bg-emerald-50 dark:target:bg-emerald-950">
+          (s) => `<li id="src-${s.id}" class="flex scroll-mt-6 gap-3 rounded-lg target:bg-emerald-50">
   <span class="shrink-0 text-stone-500 tabular-nums">[${r.sourceNo.get(s.id)}]</span>
   <span class="min-w-0">
     ${esc(s.org)}「<a href="${esc(s.url)}" rel="noopener external" class="${C.link} break-words">${esc(s.title)}</a>」
-    <span class="block text-xs text-stone-500 dark:text-stone-400">${[
+    <span class="block text-xs text-stone-500">${[
       s.published ? `公表: ${formatDate(s.published)}` : "",
       s.checked ? `確認: ${formatDate(s.checked)}` : "",
     ]
@@ -800,7 +805,7 @@ function publishedIssuePage(issue, article) {
     .map(
       (s) => `<li class="flex flex-col p-5 ${C.card}">
   <p class="text-sm leading-6 ${C.muted}">${r.inline(s.label)}</p>
-  <p class="mt-2 text-4xl leading-none font-bold tracking-tight text-emerald-800 tabular-nums dark:text-emerald-300">${esc(s.value)}${s.unit ? `<span class="ml-1 text-base font-bold tracking-normal">${esc(s.unit)}</span>` : ""}</p>
+  <p class="mt-2 text-4xl leading-none font-bold tracking-tight text-emerald-800 tabular-nums">${esc(s.value)}${s.unit ? `<span class="ml-1 text-base font-bold tracking-normal">${esc(s.unit)}</span>` : ""}</p>
   ${s.period ? `<p class="mt-3 text-xs leading-5 ${C.muted}">${r.inline(s.period)}</p>` : ""}
   <div class="mt-auto">${r.sourceLine(s.source)}</div>
 </li>`,
@@ -814,7 +819,7 @@ function publishedIssuePage(issue, article) {
         <header>
           <p class="${C.eyebrow}">${esc(categoryBySlug.get(issue.category).name)}</p>
           <h1 class="mt-3 text-3xl leading-tight font-bold tracking-tight sm:text-4xl">${esc(h1)}</h1>
-          <p class="mt-6 text-lg leading-9 text-stone-700 dark:text-stone-300">${r.inline(article.lead)}</p>
+          <p class="mt-6 text-lg leading-9 text-stone-700">${r.inline(article.lead)}</p>
           <p class="mt-4 text-xs ${C.muted}">データ確認日: <time datetime="${esc(article.updated)}">${formatDate(article.updated)}</time></p>
         </header>
 
@@ -876,8 +881,8 @@ function draftIssuePage(issue) {
 
         <section aria-labelledby="summary" class="mt-8">
           <h2 id="summary" class="text-sm font-bold ${C.muted}">概要</h2>
-          <p class="mt-2 text-lg leading-9 text-stone-700 dark:text-stone-300">${esc(issue.summary)}</p>
-          <p class="mt-6 rounded-xl bg-stone-100 px-4 py-3 text-sm leading-7 ${C.muted} dark:bg-stone-900">このページの解説記事は準備中です。出典を確認できた数字だけを載せる方針のため、いまは概要と、ほかの課題とのつながりだけを掲載しています。</p>
+          <p class="mt-2 text-lg leading-9 text-stone-700">${esc(issue.summary)}</p>
+          <p class="mt-6 rounded-xl bg-stone-100 px-4 py-3 text-sm leading-7 ${C.muted}">このページの解説記事は準備中です。出典を確認できた数字だけを載せる方針のため、いまは概要と、ほかの課題とのつながりだけを掲載しています。</p>
         </section>
 
         <section aria-labelledby="taxonomy" class="mt-12 pt-10 ${C.sectionTop}">
@@ -895,17 +900,17 @@ function draftIssuePage(issue) {
             : ""
         }
 
-        <section aria-labelledby="contribute" class="mt-12 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8 dark:border-emerald-900 dark:bg-emerald-950/40">
+        <section aria-labelledby="contribute" class="mt-12 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8">
           <h2 id="contribute" class="${C.h2}">この記事を書きませんか</h2>
           <p class="mt-4 leading-8">wakari の記事は、誰でも GitHub から追加できます。官公庁などの一次資料で確認した数字と出典をそろえて、Pull Request を出してください。</p>
           <ol class="mt-4 list-decimal space-y-1 pl-6 text-sm leading-7">
-            <li>リポジトリを Fork して、<code class="rounded bg-white px-1.5 py-0.5 text-[0.8125rem] break-all dark:bg-stone-900">content/issues/${issue.slug}.json</code> を追加する</li>
-            <li><code class="rounded bg-white px-1.5 py-0.5 text-[0.8125rem] dark:bg-stone-900">npm run build</code> で、出典の付け忘れがないか確かめる</li>
-            <li><code class="rounded bg-white px-1.5 py-0.5 text-[0.8125rem] dark:bg-stone-900">develop</code> ブランチに向けて Pull Request を出す</li>
+            <li>リポジトリを Fork して、<code class="rounded bg-white px-1.5 py-0.5 text-[0.8125rem] break-all">content/issues/${issue.slug}.json</code> を追加する</li>
+            <li><code class="rounded bg-white px-1.5 py-0.5 text-[0.8125rem]">npm run build</code> で、出典の付け忘れがないか確かめる</li>
+            <li><code class="rounded bg-white px-1.5 py-0.5 text-[0.8125rem]">develop</code> ブランチに向けて Pull Request を出す</li>
           </ol>
           <div class="mt-6 flex flex-wrap gap-3">
             <a href="${CONTRIBUTE_URL}" class="${C.buttonPrimary}">記事の書き方を見る</a>
-            <a href="${SITE.repo}/issues" class="${C.buttonSecondary} bg-white dark:bg-transparent">Issue で相談する</a>
+            <a href="${SITE.repo}/issues" class="${C.buttonSecondary} bg-white">Issue で相談する</a>
           </div>
         </section>
       </article>`;
@@ -931,7 +936,7 @@ function homePage() {
   const featured = issues.filter((i) => i.featured);
   const published = issues.filter(hasArticle).length;
 
-  const arrow = `<li aria-hidden="true" class="flex items-center justify-center text-2xl leading-none text-emerald-600 dark:text-emerald-400"><span class="lg:hidden">↓</span><span class="hidden lg:inline">→</span></li>`;
+  const arrow = `<li aria-hidden="true" class="flex items-center justify-center text-2xl leading-none text-emerald-600"><span class="lg:hidden">↓</span><span class="hidden lg:inline">→</span></li>`;
   const chain = MAIN_CHAIN.map((step, i) => {
     const links = step.links
       .map((link) => {
@@ -940,7 +945,7 @@ function homePage() {
       })
       .join(`<span aria-hidden="true" class="text-stone-400"> ・ </span>`);
     return `<li class="flex flex-1 flex-col p-5 ${C.card}">
-          <p class="text-xs font-bold text-emerald-700 tabular-nums dark:text-emerald-400">${i + 1}</p>
+          <p class="text-xs font-bold text-emerald-700 tabular-nums">${i + 1}</p>
           <p class="mt-1 text-lg leading-snug font-bold">${esc(step.label)}</p>
           <p class="mt-3 text-sm leading-7 ${C.muted}"><span class="sr-only">くわしく読む: </span>${links}</p>
         </li>`;
@@ -963,22 +968,22 @@ function homePage() {
 
   const body = `      <section class="${C.container} py-14 sm:py-24">
         <p class="${C.eyebrow}">${esc(SITE.tagline)}</p>
-        <h1 class="mt-4 max-w-3xl text-3xl leading-snug font-bold tracking-tight sm:text-5xl sm:leading-tight"><span class="inline-block">日本の問題は、</span><span class="inline-block">ひとつずつ</span><span class="inline-block">起きているわけでは</span><span class="inline-block">ありません。</span><span class="inline-block text-emerald-700 dark:text-emerald-400">つながっています。</span></h1>
-        <p class="mt-6 max-w-2xl text-base leading-8 text-stone-700 sm:text-lg sm:leading-9 dark:text-stone-300">wakari は、日本が抱える ${issues.length} の課題を、前提知識がなくても読めるように解説するサイトです。ひとつの課題が、ほかの課題の原因にも結果にもなっている。そのつながりをたどれるようにしています。</p>
+        <h1 class="mt-4 max-w-3xl text-3xl leading-snug font-bold tracking-tight sm:text-5xl sm:leading-tight"><span class="inline-block">日本の問題は、</span><span class="inline-block">ひとつずつ</span><span class="inline-block">起きているわけでは</span><span class="inline-block">ありません。</span><span class="inline-block text-emerald-700">つながっています。</span></h1>
+        <p class="mt-6 max-w-2xl text-base leading-8 text-stone-700 sm:text-lg sm:leading-9">wakari は、日本が抱える ${issues.length} の課題を、前提知識がなくても読めるように解説するサイトです。ひとつの課題が、ほかの課題の原因にも結果にもなっている。そのつながりをたどれるようにしています。</p>
         <div class="mt-9 flex flex-wrap gap-3">
           <a href="/issues/" class="${C.buttonPrimary}">課題一覧を見る</a>
           <a href="/about/" class="${C.buttonSecondary}">このサイトについて</a>
         </div>
       </section>
 
-      <section aria-labelledby="chain-heading" class="${C.sectionTop} bg-white dark:bg-stone-900/40">
+      <section aria-labelledby="chain-heading" class="${C.sectionTop} bg-white">
         <div class="${C.container} py-14">
           <h2 id="chain-heading" class="${C.h2}">まず、いちばん太い流れから</h2>
           <p class="mt-4 max-w-2xl leading-8 ${C.muted}">多くの課題の上流には、人口の変化があります。各ステップから、くわしい解説ページへ進めます。</p>
           <ol class="mt-8 flex flex-col gap-3 lg:flex-row lg:items-stretch">
         ${chain}
           </ol>
-          <p class="mt-5 text-xs leading-6 text-stone-500 dark:text-stone-400">矢印は、統計的に証明された因果関係ではなく、主な伝わり方を示しています。ここに出てこない原因 (賃金、制度、気候、国際情勢など) も、それぞれの課題ページで扱います。</p>
+          <p class="mt-5 text-xs leading-6 text-stone-500">矢印は、統計的に証明された因果関係ではなく、主な伝わり方を示しています。ここに出てこない原因 (賃金、制度、気候、国際情勢など) も、それぞれの課題ページで扱います。</p>
         </div>
       </section>
 
@@ -1114,7 +1119,7 @@ ${list
               ${tagButtons}
           </ul>
 
-          <div data-js-only hidden class="mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-stone-200 pt-4 text-sm dark:border-stone-800">
+          <div data-js-only hidden class="mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-stone-200 pt-4 text-sm">
             <label class="inline-flex cursor-pointer items-center gap-2">
               <input type="checkbox" data-published-only class="size-4 accent-emerald-700" />
               記事がある課題だけ表示
@@ -1128,7 +1133,7 @@ ${list
 
         <div id="issue-list" class="scroll-mt-6">
           ${panels}
-          <p data-empty hidden class="mt-12 rounded-2xl border border-dashed border-stone-300 p-8 text-center ${C.muted} dark:border-stone-700">条件に合う課題がありません。絞り込みを変えてみてください。</p>
+          <p data-empty hidden class="mt-12 rounded-2xl border border-dashed border-stone-300 p-8 text-center ${C.muted}">条件に合う課題がありません。絞り込みを変えてみてください。</p>
         </div>
       </div>`;
 
@@ -1160,7 +1165,7 @@ function taxonomyPage({ path, kind, item, list, others, otherUrl, otherHeading }
             ${others
               .map(
                 (o) =>
-                  `<li><a href="${otherUrl(o)}"${o.slug === item.slug ? ' aria-current="page"' : ""} class="${C.chip} aria-[current=page]:border-stone-900 aria-[current=page]:bg-stone-900 aria-[current=page]:text-white dark:aria-[current=page]:border-stone-100 dark:aria-[current=page]:bg-stone-100 dark:aria-[current=page]:text-stone-900">${esc(o.name)}</a></li>`,
+                  `<li><a href="${otherUrl(o)}"${o.slug === item.slug ? ' aria-current="page"' : ""} class="${C.chip} aria-[current=page]:border-stone-900 aria-[current=page]:bg-stone-900 aria-[current=page]:text-white">${esc(o.name)}</a></li>`,
               )
               .join("\n            ")}
           </ul>
@@ -1190,25 +1195,25 @@ function aboutPage() {
       <article class="${C.prose} pt-10 sm:pt-14">
         <p class="${C.eyebrow}">${esc(SITE.tagline)}</p>
         <h1 class="mt-3 text-3xl leading-tight font-bold tracking-tight sm:text-4xl">このサイトについて</h1>
-        <p class="mt-6 text-lg leading-9 text-stone-700 dark:text-stone-300">wakari は、日本が抱える課題を、前提知識がなくても読めるように解説するサイトです。課題をひとつずつ切り離さず、「何が起きているか」「なぜ起きるか」「何とつながっているか」をあわせて示します。</p>
+        <p class="mt-6 text-lg leading-9 text-stone-700">wakari は、日本が抱える課題を、前提知識がなくても読めるように解説するサイトです。課題をひとつずつ切り離さず、「何が起きているか」「なぜ起きるか」「何とつながっているか」をあわせて示します。</p>
 
         ${h2("policy", "編集方針: 4 つを分けて書く")}
         ${p("社会の課題についての文章は、事実と意見が混ざると読みにくくなります。wakari では、次の 4 つを分けて書きます。")}
         <dl class="mt-6 space-y-4">
           <div class="p-5 ${C.card}">
-            <dt class="font-bold"><span class="mr-2 text-emerald-700 dark:text-emerald-400">1</span>事実</dt>
+            <dt class="font-bold"><span class="mr-2 text-emerald-700">1</span>事実</dt>
             <dd class="mt-2 text-sm leading-7 ${C.muted}">いま何が起きているか。官公庁などの一次資料で確認した数字を、対象の年月と「確定値・概数・推計」の別を添えて書きます。</dd>
           </div>
           <div class="p-5 ${C.card}">
-            <dt class="font-bold"><span class="mr-2 text-emerald-700 dark:text-emerald-400">2</span>構造</dt>
+            <dt class="font-bold"><span class="mr-2 text-emerald-700">2</span>構造</dt>
             <dd class="mt-2 text-sm leading-7 ${C.muted}">なぜ起きるのか、何とつながっているのか。矢印で示すつながりは「主な伝わり方」であり、統計的に証明された因果関係とは限りません。</dd>
           </div>
           <div class="p-5 ${C.card}">
-            <dt class="font-bold"><span class="mr-2 text-emerald-700 dark:text-emerald-400">3</span>選択肢</dt>
+            <dt class="font-bold"><span class="mr-2 text-emerald-700">3</span>選択肢</dt>
             <dd class="mt-2 text-sm leading-7 ${C.muted}">どんな対応がありうるか。賛成・反対ではなく、それぞれの「期待できること」と「負担・副作用」を並べます。</dd>
           </div>
           <div class="p-5 ${C.card}">
-            <dt class="font-bold"><span class="mr-2 text-emerald-700 dark:text-emerald-400">4</span>評価</dt>
+            <dt class="font-bold"><span class="mr-2 text-emerald-700">4</span>評価</dt>
             <dd class="mt-2 text-sm leading-7 ${C.muted}">どれを選ぶべきか。ここは読む人が判断するところです。wakari は特定の政策を唯一の正解として書きません。立場が分かれる話題は、複数の見方を公平に紹介します。</dd>
           </div>
         </dl>

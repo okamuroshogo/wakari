@@ -35,7 +35,7 @@ AI エージェント (Claude Code / Codex など) と人間の両方に向け�
   - `node scripts/build-ogp.mjs --list` で、全タイトルの文字サイズと折り返しを画像なしで確認できる。課題名を足したり変えたりしたら見ておく
 - `assets/ogp/background.svg` … OGP 画像の背景 (タイトルなし、オリジナル)。写真や他者の素材・ロゴを入れない
 - `assets/fonts/NotoSansJP-Bold.otf` … OGP 画像用のフォント (SIL OFL 1.1、ライセンス文は同じ場所の `OFL.txt`)。[notofonts/noto-cjk](https://github.com/notofonts/noto-cjk) の `Sans/SubsetOTF/JP/` から取得したものをそのまま置いている。CI (ubuntu-latest) には日本語フォントがないので、システムフォントには頼らない
-- `public/` … 公開されるファイル。**HTML・`sitemap.xml`・`robots.txt`・`assets/styles.css`・`ogp/` は生成物で git 管理外。手で編集しない。** 手書きは `_headers` と `assets/issues-filter.js` (/issues/ の絞り込み) だけ
+- `public/` … 公開されるファイル。**HTML・`sitemap.xml`・`robots.txt`・`assets/styles.css`・`ogp/` は生成物で git 管理外。手で編集しない。** 手書きは `_headers`、`assets/issues-filter.js` (/issues/ の絞り込み)、favicon (`favicon.svg` `favicon.ico` `apple-touch-icon.png`) だけ
 - `src/styles.css` … Tailwind の入力。クラス名は `public/` と `scripts/` から拾う
 - `stg/functions/` … stg 専用の Basic 認証ミドルウェア。stg デプロイ時だけ `./functions` にコピーされる
 - `.github/workflows/` … `ci.yml` (PR のビルド確認)、`deploy.yml` (デプロイ)。どちらも `npm run build` を実行する
@@ -71,3 +71,4 @@ npm run preview      # http://localhost:8788 でプレビュー (別ターミナ
 - コミットメッセージと PR のルールは [README.md](./README.md) に従う
 - 解説記事の数字や事実には出典を付ける。出典のない内容を創作しない。`[^s1]` で `sources` を参照し、`stats` には必ず `source` を付ける (ビルドで検証される)
 - 本番 (`wakari-prd`) に Functions を足さない。Basic 認証は stg だけ
+- **ダークテーマは作らない。** サイトは明るいライトテーマだけにする。`dark:` のクラスや `prefers-color-scheme: dark` のスタイルを足さない
