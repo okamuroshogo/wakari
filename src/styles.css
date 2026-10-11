@@ -1,6 +1,33 @@
 @import "tailwindcss" source("../public");
+/* ページは scripts/build.mjs が生成するので、クラス名はそこからも拾う */
+@source "../scripts";
 
 @theme {
   --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
     "Yu Gothic", Meiryo, system-ui, sans-serif;
+}
+
+@layer base {
+  /* 和文組み: 行頭・行末の禁則を厳しめにし、見出しは文節で折り返す */
+  html {
+    line-break: strict;
+    overflow-wrap: anywhere;
+    scroll-behavior: smooth;
+  }
+  h1,
+  h2,
+  h3 {
+    word-break: auto-phrase;
+    text-wrap: balance;
+    font-feature-settings: "palt";
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-emerald-600);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }

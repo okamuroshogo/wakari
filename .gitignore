@@ -1,6 +1,10 @@
 # dependencies / build output
 node_modules/
 public/assets/styles.css
+# scripts/build.mjs が生成するページ (手で編集しない)
+public/**/*.html
+public/sitemap.xml
+public/robots.txt
 /functions/
 .wrangler/
 

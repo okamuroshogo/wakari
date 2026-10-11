@@ -9,7 +9,7 @@
 ## 参加のしかた
 
 1. このリポジトリを **Fork** する
-2. `develop` からブランチを切る (例: `content/shoshika`、`fix/typo-top`)
+2. `develop` からブランチを切る (例: `content/low-birthrate`、`fix/typo-top`)
 3. 変更してコミットする ([コミットガイドライン](#コミットガイドライン))
 4. **`develop` に向けて** Pull Request を出す ([PR の出し方](#pull-request-の出し方))
 5. [@okamuroshogo](https://github.com/okamuroshogo) がレビューし、承認されるとマージされます
@@ -68,23 +68,82 @@ fix: トップページの誤字を修正
 
 `develop` にマージ → stg に反映 → @okamuroshogo が `develop` を `main` にマージ → 本番公開、という流れです。
 
+## 記事を追加する
+
+課題は 63 件あり、解説記事がまだない課題は「準備中」ページとして公開されています。
+記事は **`content/issues/<slug>.json` を 1 つ足すだけ**で追加できます (HTML は書きません)。
+
+1. [`data/issues.json`](./data/issues.json) で、書きたい課題の `id` と `slug` を確認する (例: `P001` / `low-birthrate`)
+2. `content/issues/<slug>.json` を作る。すでにある記事 (例: [`content/issues/low-birthrate.json`](./content/issues/low-birthrate.json)) をコピーして書き換えるのが簡単です
+3. `npm run build` を実行する。出典の付け忘れなどがあると、どこが問題かを表示して失敗します
+4. `npm run preview` で `http://localhost:8788/issues/<slug>/` を開いて確認する
+
+### 記事ファイルの形
+
+```jsonc
+{
+  "id": "P001",                  // data/issues.json の id と同じにする
+  "h1": "少子化とは？ 日本で何が起きているのか",
+  "lead": "2〜3 文の導入。",
+  "updated": "2026-10-11",       // データを確認した日
+  "stats": [                     // 最重要の数字 1〜3 個。source は必須
+    {"value": "…", "unit": "人", "label": "出生数", "period": "2025年 (確定数)", "source": "s1"}
+  ],
+  "flow": ["原因", "この課題", "波及先"],   // 因果の流れ (省略可)
+  "now": ["段落…[^s1]"],         // いま何が起きている？
+  "numbers": ["段落…"],          // 数字で見る
+  "why": ["段落…"],              // なぜ起きる？
+  "connections": [{"id": "P004", "note": "つながりの一言説明。"}],
+  "misconceptions": [{"myth": "よくある誤解", "fact": "実際は…[^s2]"}],
+  "options": [{"name": "選択肢", "pros": "期待できること", "cons": "負担・副作用"}],   // 省略可
+  "indicators": [{"name": "指標名", "desc": "いつ、どこで公表されるか。", "source": "s1"}],
+  "sources": [                   // 1 件以上必須
+    {"id": "s1", "org": "厚生労働省", "title": "資料名", "url": "https://…",
+     "published": "2026-09", "checked": "2026-10-11"}
+  ]
+}
+```
+
+- 本文 (`now` / `numbers` / `why`) は「ブロック」の配列です。文字列は段落になります。ほかに次の 3 種類が使えます
+  - `{"type": "list", "items": ["…"]}` — 箇条書き
+  - `{"type": "table", "caption": "…", "head": ["年", "出生数"], "rows": [["2023", "…"]], "source": "s1"}` — 表
+  - `{"type": "bars", "caption": "…", "unit": "万人", "items": [{"label": "2015年", "value": 100.6}], "source": "s1"}` — 横棒グラフ (`value` は数値)
+- 文字列はプレーンテキストです。HTML タグは書けません。使える記法は、出典の `[^s1]` (`sources` の `id`) と `**太字**` だけです
+- 数字には「いつの数字か」と「確定値 / 概数 / 推計」の別を書き、一次資料 (官公庁など) の出典を付けてください
+
+### ビルド時にチェックされること
+
+次のどれかに当てはまると `npm run build` (CI も同じ) が失敗します。
+
+- `id` が `data/issues.json` と一致しない、ファイル名に対応する `slug` がない
+- `sources` が 1 件もない、本文の `[^sX]` が `sources` にない
+- `stats` に `source` がない、表・グラフ・指標の `source` が `sources` にない
+- `connections` の `id` が存在しない
+- `data/` の `id`・`slug` の重複、`related`・`category`・`tags` の参照切れ
+
 ## ローカルで動かす
 
 Node.js 24 以上が必要です。
 
 ```sh
 npm ci           # 依存のインストール
-npm run build    # CSS をビルド
+npm run build    # ページ (HTML) を生成してから CSS をビルド
 npm run preview  # http://localhost:8788 でプレビュー
 ```
 
 編集しながら確認するときは、別のターミナルで `npm run dev` (CSS の watch ビルド) も動かしてください。
+`data/`・`content/`・`scripts/` を変えたときは `npm run build:pages` でページを作り直します。
 
 ### 構成
 
-- `public/` — 公開されるファイル (HTML など)
+- `data/` — 課題 (`issues.json`)、カテゴリ (`categories.json`)、横断タグ (`tags.json`) の一覧
+- `content/issues/<slug>.json` — 課題ごとの解説記事。ファイルがない課題は「準備中」ページになる
+- `scripts/build.mjs` — `data/` と `content/` を検証して、`public/` に HTML・`sitemap.xml`・`robots.txt` を生成する
 - `src/styles.css` — [Tailwind CSS](https://tailwindcss.com/) の入力ファイル
+- `public/` — 公開されるファイル。HTML は生成物なので git 管理外 (**手で編集しない**)。手で置くのは `_headers` と `assets/issues-filter.js` だけ
 - `stg/functions/` — stg 専用の Basic 認証
 - `.github/workflows/` — CI とデプロイ ([Cloudflare Pages](https://pages.cloudflare.com/))
+
+ページのデザインや構成を変えたいときは、HTML ではなく `scripts/build.mjs` を編集します。
 
 AI エージェントで作業する場合は [AGENTS.md](./AGENTS.md) も読んでください。

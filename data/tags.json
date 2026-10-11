@@ -1,0 +1,13 @@
+[
+  {"slug": "population", "name": "人口制約", "description": "人口の減少や年齢構成の変化が、直接の原因や背景になっている課題。"},
+  {"slug": "workforce", "name": "担い手不足", "description": "働く人・支える人が足りないことが中心にある課題。"},
+  {"slug": "regional-gap", "name": "地域偏在", "description": "都市と地方など、地域によって状況が大きく違う課題。"},
+  {"slug": "income-living", "name": "所得・生活", "description": "賃金、物価、住まいなど、日々の暮らしの負担に関わる課題。"},
+  {"slug": "future-generations", "name": "将来世代", "description": "いまの選択が、子どもやこれから生まれる世代の負担や機会に影響する課題。"},
+  {"slug": "external-dependence", "name": "外部依存", "description": "エネルギー、食料、重要物資などを海外に頼っていることから生まれる課題。"},
+  {"slug": "resilience", "name": "レジリエンス", "description": "災害や事故、攻撃などが起きても社会の機能を保ち、立ち直る力に関わる課題。"},
+  {"slug": "digital", "name": "デジタル", "description": "AI、行政や企業のデジタル化、サイバー空間に関わる課題。"},
+  {"slug": "institutional-design", "name": "制度設計", "description": "法律、税、規制、政策の作り方など、仕組みそのものが問われる課題。"},
+  {"slug": "climate-nature", "name": "気候・自然", "description": "気候変動や自然環境の変化が関わる課題。"},
+  {"slug": "geopolitics", "name": "地政学", "description": "国際情勢や他国との関係が大きく影響する課題。"}
+]

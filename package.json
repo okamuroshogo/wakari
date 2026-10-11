@@ -5,8 +5,10 @@
   "description": "日本の課題をわかりやすく解説するサイト wakari.jp",
   "type": "module",
   "scripts": {
-    "build": "tailwindcss -i src/styles.css -o public/assets/styles.css --minify",
-    "dev": "tailwindcss -i src/styles.css -o public/assets/styles.css --watch",
+    "build": "npm run build:pages && npm run build:css",
+    "build:pages": "node scripts/build.mjs",
+    "build:css": "tailwindcss -i src/styles.css -o public/assets/styles.css --minify",
+    "dev": "npm run build:pages && tailwindcss -i src/styles.css -o public/assets/styles.css --watch",
     "preview": "wrangler pages dev public"
   },
   "devDependencies": {

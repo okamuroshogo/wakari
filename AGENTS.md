@@ -25,19 +25,26 @@ AI エージェント (Claude Code / Codex など) と人間の両方に向け�
 
 「日本の課題をわかりやすく解説するサイト」 wakari.jp のソースです。誰でも Pull Request を出せます。
 
-- Cloudflare Pages の静的サイト + Tailwind CSS v4 (`@tailwindcss/cli`)
-- `public/` … 公開されるファイル (HTML など)。そのまま配信される
-- `src/styles.css` … Tailwind の入力。ビルドで `public/assets/styles.css` を生成 (git 管理外)
+- Cloudflare Pages の静的サイト。HTML は `scripts/build.mjs` (Node.js 24、依存なし) が生成し、CSS は Tailwind CSS v4 (`@tailwindcss/cli`)
+- `data/issues.json` `data/categories.json` `data/tags.json` … 63 課題・10 カテゴリ・11 横断タグのマスターデータ
+- `content/issues/<slug>.json` … 課題ごとの解説記事。ない課題は「準備中」ページになる。スキーマは README の「記事を追加する」
+- `scripts/build.mjs` … データを検証し、`public/` に全ページ・`sitemap.xml`・`robots.txt` を生成する。検証に失敗すると exit 1
+- `public/` … 公開されるファイル。**HTML・`sitemap.xml`・`robots.txt`・`assets/styles.css` は生成物で git 管理外。手で編集しない。** 手書きは `_headers` と `assets/issues-filter.js` (/issues/ の絞り込み) だけ
+- `src/styles.css` … Tailwind の入力。クラス名は `public/` と `scripts/` から拾う
 - `stg/functions/` … stg 専用の Basic 認証ミドルウェア。stg デプロイ時だけ `./functions` にコピーされる
-- `.github/workflows/` … `ci.yml` (PR のビルド確認)、`deploy.yml` (デプロイ)
+- `.github/workflows/` … `ci.yml` (PR のビルド確認)、`deploy.yml` (デプロイ)。どちらも `npm run build` を実行する
+
+生成される URL: `/`、`/issues/`、`/issues/<slug>/`、`/categories/<slug>/`、`/tags/<slug>/`、`/about/`、`404.html`。
+ページの見た目や構成を変えるときは `scripts/build.mjs` のテンプレートを編集する。
 
 ## コマンド
 
 ```sh
-npm ci           # 依存のインストール
-npm run build    # CSS をビルド
-npm run dev      # CSS を watch ビルド
-npm run preview  # http://localhost:8788 でプレビュー (別ターミナルで)
+npm ci               # 依存のインストール
+npm run build        # ページ生成 (検証つき) → CSS ビルド
+npm run build:pages  # ページ生成だけ
+npm run dev          # ページ生成 → CSS を watch ビルド
+npm run preview      # http://localhost:8788 でプレビュー (別ターミナルで)
 ```
 
 ## ブランチとデプロイ
@@ -55,5 +62,5 @@ npm run preview  # http://localhost:8788 でプレビュー (別ターミナル�
 ## 書き方のルール
 
 - コミットメッセージと PR のルールは [README.md](./README.md) に従う
-- 解説記事の数字や事実には出典を付ける。出典のない内容を創作しない
+- 解説記事の数字や事実には出典を付ける。出典のない内容を創作しない。`[^s1]` で `sources` を参照し、`stats` には必ず `source` を付ける (ビルドで検証される)
 - 本番 (`wakari-prd`) に Functions を足さない。Basic 認証は stg だけ

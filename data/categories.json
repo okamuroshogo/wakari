@@ -1,0 +1,12 @@
+[
+  {"slug": "population-family", "name": "人口と家族", "description": "生まれる子どもの数、高齢化、人口の減り方、世帯のかたちなど、社会の土台になる変化。", "codes": ["DEM"]},
+  {"slug": "economy-living", "name": "暮らしと経済", "description": "賃金、物価、仕事、社会保障、財政など、家計と働き方に関わる課題。", "codes": ["ECO", "SOC"]},
+  {"slug": "education-children", "name": "教育と子ども", "description": "学びの機会の差、不登校、教育の国際化など、子どもと学校をめぐる課題。", "codes": ["EDU"]},
+  {"slug": "health-care", "name": "医療と健康", "description": "医療・介護を支える人と仕組み、地域による医療の差、認知症など。", "codes": ["HEA"]},
+  {"slug": "regions-infrastructure", "name": "地域とインフラ", "description": "空き家、住宅、道路や水道、公共交通、地域の文化など、まちを維持するための課題。", "codes": ["INF", "CUL"]},
+  {"slug": "climate-disaster", "name": "気候・自然・災害", "description": "地震、豪雨、猛暑、生物多様性、ごみ、化学物質など、自然環境と災害の課題。", "codes": ["ENV"]},
+  {"slug": "food-energy", "name": "食料とエネルギー", "description": "食べものとエネルギーをどこから、どう安定して確保するかという課題。", "codes": ["ENE", "AGR"]},
+  {"slug": "technology-future", "name": "技術と未来", "description": "サイバーセキュリティ、DX・AI、研究力など、技術と将来の競争力に関わる課題。", "codes": ["TEC"]},
+  {"slug": "politics-institutions", "name": "政治・制度", "description": "政策の作り方、行政のデジタル化、企業統治、人権、情報空間など、ルールと仕組みの課題。", "codes": ["GOV"]},
+  {"slug": "world-security", "name": "世界と安全保障", "description": "国際情勢、海洋、防衛、重要物資の供給網など、世界との関係から生まれる課題。", "codes": ["SEC"]}
+]
