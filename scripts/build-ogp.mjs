@@ -17,9 +17,9 @@ const FONT_FILE = join(ROOT, "assets", "fonts", "NotoSansJP-Bold.otf");
 const FONT_FAMILY = "Noto Sans JP";
 const BACKGROUND_FILE = join(ROOT, "assets", "ogp", "background.svg");
 
-const SITE_NAME = "wakari";
+const SITE_NAME = "日本の課題をわかりやすく解説";
 const TOP_TITLE = "日本の問題は、ひとつずつ\n起きているわけではありません。\nつながっています。";
-const TOP_LABEL = "日本の課題を、わかりやすく。";
+const TOP_LABEL = "wakari.jp";
 
 // ---------------------------------------------------------------------------
 // レイアウト
@@ -297,7 +297,7 @@ function composeSvg({ title, label, hue = DEFAULT_HUE, accentLastLine = false },
     .join("\n    ");
 
   // フッター: 左にサイト名、右にカテゴリ名など (角丸のラベル)
-  const nameSize = 40;
+  const nameSize = 34;
   const labelSize = 26;
   const labelPadX = 24;
   const labelH = 52;

@@ -13,12 +13,12 @@ const CONTENT_DIR = process.env.WAKARI_CONTENT_DIR || join(ROOT, "content", "iss
 const OUT_DIR = process.env.WAKARI_OUT_DIR || join(ROOT, "public");
 
 const SITE = {
-  name: "wakari",
+  name: "日本の課題をわかりやすく解説",
   origin: "https://wakari.jp",
-  tagline: "日本の課題を、わかりやすく。",
+  tagline: "63 の課題を、つながりで読む。",
   claim: "日本の問題は、ひとつずつ起きているわけではありません。つながっています。",
   description:
-    "wakari は、日本の課題を公的な統計をもとに、原因とほかの課題とのつながりまでわかりやすく解説するオープンなサイトです。",
+    "このサイトは、日本の課題を公的な統計をもとに、原因とほかの課題とのつながりまでわかりやすく解説するオープンなサイトです。",
   repo: "https://github.com/okamuroshogo/wakari",
 };
 // OGP 画像の大きさ。画像そのものは scripts/build-ogp.mjs が public/ogp/ に生成する。
@@ -487,7 +487,7 @@ function layout({
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-10 focus:rounded-full focus:bg-stone-900 focus:px-4 focus:py-2 focus:text-sm focus:text-white">本文へ移動</a>
     <header class="border-b border-stone-200">
       <div class="${C.container} flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-4">
-        <a href="/" class="text-xl font-bold tracking-tight">${esc(SITE.name)}</a>
+        <a href="/" class="text-base font-bold tracking-tight sm:text-xl">${esc(SITE.name)}</a>
         <nav aria-label="サイト内メニュー">
           <ul class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
           ${navLinks}
@@ -902,7 +902,7 @@ function draftIssuePage(issue) {
 
         <section aria-labelledby="contribute" class="mt-12 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8">
           <h2 id="contribute" class="${C.h2}">この記事を書きませんか</h2>
-          <p class="mt-4 leading-8">wakari の記事は、誰でも GitHub から追加できます。官公庁などの一次資料で確認した数字と出典をそろえて、Pull Request を出してください。</p>
+          <p class="mt-4 leading-8">このサイトの記事は、誰でも GitHub から追加できます。官公庁などの一次資料で確認した数字と出典をそろえて、Pull Request を出してください。</p>
           <ol class="mt-4 list-decimal space-y-1 pl-6 text-sm leading-7">
             <li>リポジトリを Fork して、<code class="rounded bg-white px-1.5 py-0.5 text-[0.8125rem] break-all">content/issues/${issue.slug}.json</code> を追加する</li>
             <li><code class="rounded bg-white px-1.5 py-0.5 text-[0.8125rem]">npm run build</code> で、出典の付け忘れがないか確かめる</li>
@@ -969,7 +969,7 @@ function homePage() {
   const body = `      <section class="${C.container} py-14 sm:py-24">
         <p class="${C.eyebrow}">${esc(SITE.tagline)}</p>
         <h1 class="mt-4 max-w-3xl text-3xl leading-snug font-bold tracking-tight sm:text-5xl sm:leading-tight"><span class="inline-block">日本の問題は、</span><span class="inline-block">ひとつずつ</span><span class="inline-block">起きているわけでは</span><span class="inline-block">ありません。</span><span class="inline-block text-emerald-700">つながっています。</span></h1>
-        <p class="mt-6 max-w-2xl text-base leading-8 text-stone-700 sm:text-lg sm:leading-9">wakari は、日本が抱える ${issues.length} の課題を、前提知識がなくても読めるように解説するサイトです。ひとつの課題が、ほかの課題の原因にも結果にもなっている。そのつながりをたどれるようにしています。</p>
+        <p class="mt-6 max-w-2xl text-base leading-8 text-stone-700 sm:text-lg sm:leading-9">このサイトは、日本が抱える ${issues.length} の課題を、前提知識がなくても読めるように解説するサイトです。ひとつの課題が、ほかの課題の原因にも結果にもなっている。そのつながりをたどれるようにしています。</p>
         <div class="mt-9 flex flex-wrap gap-3">
           <a href="/issues/" class="${C.buttonPrimary}">課題一覧を見る</a>
           <a href="/about/" class="${C.buttonSecondary}">このサイトについて</a>
@@ -1018,7 +1018,7 @@ function homePage() {
 
       <section aria-labelledby="policy-heading" class="${C.sectionTop}">
         <div class="${C.container} py-14">
-          <h2 id="policy-heading" class="sr-only">wakari の編集方針</h2>
+          <h2 id="policy-heading" class="sr-only">このサイトの編集方針</h2>
           <div class="grid gap-8 sm:grid-cols-3">
             <div>
               <h3 class="font-bold">わかりやすく</h3>
@@ -1041,7 +1041,7 @@ function homePage() {
     path,
     layout({
       path,
-      title: `${SITE.name} — 日本の課題を、つながりでわかりやすく`,
+      title: `${SITE.name} | wakari.jp`,
       description: SITE.description,
       body,
       jsonLd: [
@@ -1195,10 +1195,10 @@ function aboutPage() {
       <article class="${C.prose} pt-10 sm:pt-14">
         <p class="${C.eyebrow}">${esc(SITE.tagline)}</p>
         <h1 class="mt-3 text-3xl leading-tight font-bold tracking-tight sm:text-4xl">このサイトについて</h1>
-        <p class="mt-6 text-lg leading-9 text-stone-700">wakari は、日本が抱える課題を、前提知識がなくても読めるように解説するサイトです。課題をひとつずつ切り離さず、「何が起きているか」「なぜ起きるか」「何とつながっているか」をあわせて示します。</p>
+        <p class="mt-6 text-lg leading-9 text-stone-700">このサイトは、日本が抱える課題を、前提知識がなくても読めるように解説するサイトです。課題をひとつずつ切り離さず、「何が起きているか」「なぜ起きるか」「何とつながっているか」をあわせて示します。</p>
 
         ${h2("policy", "編集方針: 4 つを分けて書く")}
-        ${p("社会の課題についての文章は、事実と意見が混ざると読みにくくなります。wakari では、次の 4 つを分けて書きます。")}
+        ${p("社会の課題についての文章は、事実と意見が混ざると読みにくくなります。このサイトでは、次の 4 つを分けて書きます。")}
         <dl class="mt-6 space-y-4">
           <div class="p-5 ${C.card}">
             <dt class="font-bold"><span class="mr-2 text-emerald-700">1</span>事実</dt>
@@ -1214,7 +1214,7 @@ function aboutPage() {
           </div>
           <div class="p-5 ${C.card}">
             <dt class="font-bold"><span class="mr-2 text-emerald-700">4</span>評価</dt>
-            <dd class="mt-2 text-sm leading-7 ${C.muted}">どれを選ぶべきか。ここは読む人が判断するところです。wakari は特定の政策を唯一の正解として書きません。立場が分かれる話題は、複数の見方を公平に紹介します。</dd>
+            <dd class="mt-2 text-sm leading-7 ${C.muted}">どれを選ぶべきか。ここは読む人が判断するところです。このサイトは特定の政策を唯一の正解として書きません。立場が分かれる話題は、複数の見方を公平に紹介します。</dd>
           </div>
         </dl>
 
@@ -1231,7 +1231,7 @@ function aboutPage() {
         ${p(`解説記事がまだない課題は「準備中」と表示し、概要と分類、ほかの課題とのつながりだけを掲載しています。<a href="/issues/" class="${C.link}">課題一覧</a>から、記事の有無を確認できます。`)}
 
         ${h2("contribute", "参加方法")}
-        ${p(`wakari の内容は、すべて <a href="${SITE.repo}" class="${C.link}">GitHub のリポジトリ</a>で公開されています。誤字の修正ひとつでも、新しい解説記事でも歓迎です。`)}
+        ${p(`このサイトの内容は、すべて <a href="${SITE.repo}" class="${C.link}">GitHub のリポジトリ</a>で公開されています。誤字の修正ひとつでも、新しい解説記事でも歓迎です。`)}
         <ul class="mt-5 list-disc space-y-2 pl-6 leading-8 marker:text-emerald-600 sm:text-[1.0625rem]">
           <li><strong class="font-bold">誤りを見つけたら</strong> — <a href="${SITE.repo}/issues" class="${C.link}">Issue</a> で教えてください。出典となる資料があると助かります。</li>
           <li><strong class="font-bold">記事を書くなら</strong> — 課題ごとに 1 つの JSON ファイルを追加して、Pull Request を出します。書き方は <a href="${CONTRIBUTE_URL}" class="${C.link}">README の「記事を追加する」</a>にまとめています。</li>
@@ -1246,7 +1246,7 @@ function aboutPage() {
     layout({
       path,
       title: `このサイトについて | ${SITE.name}`,
-      description: "wakari の編集方針 (事実・構造・選択肢・評価を分けて書く)、出典の扱い、記事の追加や修正に参加する方法を説明します。",
+      description: "このサイトの編集方針 (事実・構造・選択肢・評価を分けて書く)、出典の扱い、記事の追加や修正に参加する方法を説明します。",
       body,
       nav: "about",
       jsonLd: [breadcrumbJsonLd(crumbs, path)],
