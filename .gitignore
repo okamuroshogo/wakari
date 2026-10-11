@@ -5,6 +5,8 @@ public/assets/styles.css
 public/**/*.html
 public/sitemap.xml
 public/robots.txt
+# scripts/build-ogp.mjs が生成する OGP 画像
+public/ogp/
 /functions/
 .wrangler/
 

@@ -127,23 +127,28 @@ Node.js 24 以上が必要です。
 
 ```sh
 npm ci           # 依存のインストール
-npm run build    # ページ (HTML) を生成してから CSS をビルド
+npm run build    # ページ (HTML) → OGP 画像 → CSS の順にビルド
 npm run preview  # http://localhost:8788 でプレビュー
 ```
 
 編集しながら確認するときは、別のターミナルで `npm run dev` (CSS の watch ビルド) も動かしてください。
 `data/`・`content/`・`scripts/` を変えたときは `npm run build:pages` でページを作り直します。
+SNS で共有されたときに出る画像 (OGP 画像) だけを作り直すときは `npm run build:ogp` です。
 
 ### 構成
 
 - `data/` — 課題 (`issues.json`)、カテゴリ (`categories.json`)、横断タグ (`tags.json`) の一覧
 - `content/issues/<slug>.json` — 課題ごとの解説記事。ファイルがない課題は「準備中」ページになる
 - `scripts/build.mjs` — `data/` と `content/` を検証して、`public/` に HTML・`sitemap.xml`・`robots.txt` を生成する
+- `scripts/build-ogp.mjs` — ページごとの OGP 画像 (1200×630 の PNG) を `public/ogp/` に生成する。課題名やカテゴリ名を `data/` から読み、背景の上に重ねる
+- `assets/ogp/background.svg` — OGP 画像の背景 (このサイト用に描いたオリジナル)。`assets/fonts/` — 画像の文字に使う [Noto Sans JP](https://github.com/notofonts/noto-cjk) Bold ([SIL Open Font License 1.1](./assets/fonts/OFL.txt))
 - `src/styles.css` — [Tailwind CSS](https://tailwindcss.com/) の入力ファイル
-- `public/` — 公開されるファイル。HTML は生成物なので git 管理外 (**手で編集しない**)。手で置くのは `_headers` と `assets/issues-filter.js` だけ
+- `public/` — 公開されるファイル。HTML と `ogp/` の画像は生成物なので git 管理外 (**手で編集しない**)。手で置くのは `_headers` と `assets/issues-filter.js` だけ
 - `stg/functions/` — stg 専用の Basic 認証
 - `.github/workflows/` — CI とデプロイ ([Cloudflare Pages](https://pages.cloudflare.com/))
 
 ページのデザインや構成を変えたいときは、HTML ではなく `scripts/build.mjs` を編集します。
+OGP 画像のデザインは `scripts/build-ogp.mjs` と `assets/ogp/background.svg` で変えられます (他者の写真・素材・ロゴは使わないでください)。
+`node scripts/build-ogp.mjs --list` で、タイトルごとの文字サイズと折り返し位置を確認できます。
 
 AI エージェントで作業する場合は [AGENTS.md](./AGENTS.md) も読んでください。

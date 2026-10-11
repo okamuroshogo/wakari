@@ -5,13 +5,15 @@
   "description": "日本の課題をわかりやすく解説するサイト wakari.jp",
   "type": "module",
   "scripts": {
-    "build": "npm run build:pages && npm run build:css",
+    "build": "npm run build:pages && npm run build:ogp && npm run build:css",
     "build:pages": "node scripts/build.mjs",
+    "build:ogp": "node scripts/build-ogp.mjs",
     "build:css": "tailwindcss -i src/styles.css -o public/assets/styles.css --minify",
     "dev": "npm run build:pages && tailwindcss -i src/styles.css -o public/assets/styles.css --watch",
     "preview": "wrangler pages dev public"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/cli": "^4.3.3",
     "tailwindcss": "^4.3.3",
     "wrangler": "^4.149.0"

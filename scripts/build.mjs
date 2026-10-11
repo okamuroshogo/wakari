@@ -21,6 +21,8 @@ const SITE = {
     "wakari は、日本の課題を公的な統計をもとに、原因とほかの課題とのつながりまでわかりやすく解説するオープンなサイトです。",
   repo: "https://github.com/okamuroshogo/wakari",
 };
+// OGP 画像の大きさ。画像そのものは scripts/build-ogp.mjs が public/ogp/ に生成する。
+const OG_IMAGE = { width: 1200, height: 630 };
 const CONTRIBUTE_URL = `${SITE.repo}#${encodeURIComponent("記事を追加する")}`;
 
 // トップページの「主因果の流れ」。各ステップから該当する課題ページへリンクする。
@@ -329,6 +331,9 @@ const issueUrl = (issue) => `/issues/${issue.slug}/`;
 const categoryUrl = (category) => `/categories/${category.slug}/`;
 const tagUrl = (tag) => `/tags/${tag.slug}/`;
 const hasArticle = (issue) => articles.has(issue.slug);
+// ページの URL から OGP 画像の絶対 URL を決める: "/" → /ogp/index.png、"/issues/<slug>/" → /ogp/issues/<slug>.png
+// (scripts/build-ogp.mjs が同じ規則でファイルを書き出す)
+const ogImageUrl = (path) => `${SITE.origin}/ogp${path.replace(/\/$/, "") || "/index"}.png`;
 
 const C = {
   container: "mx-auto w-full max-w-5xl px-5 sm:px-8",
@@ -423,8 +428,22 @@ const NAV = [
   { key: "github", href: SITE.repo, label: "GitHub" },
 ];
 
-function layout({ path, title, description, body, nav = "", ogType = "website", jsonLd = [], noindex = false, scripts = [] }) {
+function layout({
+  path,
+  title,
+  description,
+  body,
+  nav = "",
+  ogType = "website",
+  ogTitle = title.replace(` | ${SITE.name}`, ""), // SNS のカードにはサイト名が別に出るので、サイト名を付けない
+  ogDescription = description,
+  ogImage = ogImageUrl(path),
+  jsonLd = [],
+  noindex = false,
+  scripts = [],
+}) {
   const url = SITE.origin + path;
+  const ogImageAlt = ogTitle.includes(SITE.name) ? ogTitle : `${ogTitle} — ${SITE.name}`;
   const navLinks = NAV.map(
     (item) =>
       `<li><a href="${item.href}"${item.key === nav ? ' aria-current="page"' : ""} class="inline-block py-1 text-stone-600 underline-offset-4 hover:text-stone-900 hover:underline aria-[current=page]:font-bold aria-[current=page]:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 dark:aria-[current=page]:text-stone-100">${esc(item.label)}</a></li>`,
@@ -441,12 +460,21 @@ function layout({ path, title, description, body, nav = "", ogType = "website", 
     <meta name="description" content="${esc(description)}" />
     ${noindex ? `<meta name="robots" content="noindex" />` : `<link rel="canonical" href="${esc(url)}" />`}
     <meta property="og:site_name" content="${esc(SITE.name)}" />
-    <meta property="og:title" content="${esc(title)}" />
-    <meta property="og:description" content="${esc(description)}" />
+    <meta property="og:title" content="${esc(ogTitle)}" />
+    <meta property="og:description" content="${esc(ogDescription)}" />
     <meta property="og:type" content="${ogType}" />
     <meta property="og:url" content="${esc(url)}" />
     <meta property="og:locale" content="ja_JP" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="${esc(ogImage)}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="${OG_IMAGE.width}" />
+    <meta property="og:image:height" content="${OG_IMAGE.height}" />
+    <meta property="og:image:alt" content="${esc(ogImageAlt)}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${esc(ogTitle)}" />
+    <meta name="twitter:description" content="${esc(ogDescription)}" />
+    <meta name="twitter:image" content="${esc(ogImage)}" />
+    <meta name="twitter:image:alt" content="${esc(ogImageAlt)}" />
     <link rel="stylesheet" href="/assets/styles.css" />
     ${ld}
   </head>
@@ -670,6 +698,7 @@ function articleJsonLd(issue, { headline, description, updated }) {
     inLanguage: "ja",
     mainEntityOfPage: { "@type": "WebPage", "@id": SITE.origin + path },
     url: SITE.origin + path,
+    image: [ogImageUrl(path)],
     ...(updated ? { dateModified: updated } : {}),
     articleSection: categoryBySlug.get(issue.category).name,
     keywords: (issue.tags ?? []).map((slug) => tagBySlug.get(slug).name).join(","),
@@ -887,6 +916,8 @@ function draftIssuePage(issue) {
       path,
       title: `${issue.title}（準備中） | ${SITE.name}`,
       description,
+      ogTitle: issue.title,
+      ogDescription: truncate(issue.summary),
       body,
       nav: "issues",
       ogType: "article",
@@ -1015,6 +1046,7 @@ function homePage() {
           name: SITE.name,
           url: `${SITE.origin}/`,
           description: SITE.description,
+          image: ogImageUrl(path),
           inLanguage: "ja",
         },
       ],
@@ -1234,6 +1266,7 @@ function notFoundPage() {
       title: `ページが見つかりません | ${SITE.name}`,
       description: "お探しのページは見つかりませんでした。",
       body,
+      ogImage: ogImageUrl("/"),
       noindex: true,
     }),
     { noindex: true, file: "404.html" },

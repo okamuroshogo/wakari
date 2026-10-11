@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!--
+    wakari.jp の OGP 画像の背景 (タイトルなし)。このリポジトリのために描いたオリジナルの素材です。
+    scripts/build-ogp.mjs が、この上に白いカード・タイトル・サイト名を重ねて PNG にします。
+    モチーフは「課題どうしのつながり」(点と線)。色は emerald 系で、カテゴリごとの色味はビルド時に変えます。
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#065f46" />
+      <stop offset="0.55" stop-color="#059669" />
+      <stop offset="1" stop-color="#34d399" />
+    </linearGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="14" cy="14" r="1.6" fill="#ffffff" fill-opacity="0.16" />
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#dots)" />
+
+  <!-- 大きな円と輪 -->
+  <circle cx="70" cy="40" r="210" fill="#ffffff" fill-opacity="0.06" />
+  <circle cx="1150" cy="610" r="250" fill="#ffffff" fill-opacity="0.08" />
+  <circle cx="1060" cy="-60" r="230" fill="none" stroke="#ffffff" stroke-opacity="0.16" stroke-width="2" />
+  <circle cx="1060" cy="-60" r="170" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="2" />
+  <circle cx="110" cy="690" r="220" fill="none" stroke="#ffffff" stroke-opacity="0.16" stroke-width="2" />
+  <circle cx="110" cy="690" r="150" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="2" />
+
+  <!-- つながり: 点と線 (カードの下をくぐって反対側へ続く) -->
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.34" stroke-width="2" stroke-linecap="round">
+    <path d="M26 118 L92 26 L318 24 L560 -10" />
+    <path d="M92 26 L24 330 L70 604 L330 606" />
+    <path d="M318 24 L724 28 L1010 22 L1176 96" />
+    <path d="M1176 96 L1178 372 L1108 606 L820 604 L330 606" />
+    <path d="M24 330 L1178 372" />
+    <path d="M724 28 L820 604" />
+    <path d="M318 24 L70 604" />
+    <path d="M1010 22 L1108 606" />
+    <path d="M1178 372 L1230 470" />
+    <path d="M820 604 L900 660" />
+  </g>
+  <g fill="#ffffff">
+    <circle cx="26" cy="118" r="5" fill-opacity="0.6" />
+    <circle cx="92" cy="26" r="9" fill-opacity="0.9" />
+    <circle cx="318" cy="24" r="6" fill-opacity="0.7" />
+    <circle cx="724" cy="28" r="8" fill-opacity="0.85" />
+    <circle cx="1010" cy="22" r="5" fill-opacity="0.6" />
+    <circle cx="1176" cy="96" r="8" fill-opacity="0.85" />
+    <circle cx="1178" cy="372" r="6" fill-opacity="0.7" />
+    <circle cx="1108" cy="606" r="9" fill-opacity="0.9" />
+    <circle cx="820" cy="604" r="6" fill-opacity="0.7" />
+    <circle cx="330" cy="606" r="8" fill-opacity="0.85" />
+    <circle cx="70" cy="604" r="5" fill-opacity="0.6" />
+    <circle cx="24" cy="330" r="7" fill-opacity="0.8" />
+  </g>
+</svg>

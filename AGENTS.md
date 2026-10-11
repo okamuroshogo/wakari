@@ -25,11 +25,17 @@ AI エージェント (Claude Code / Codex など) と人間の両方に向け�
 
 「日本の課題をわかりやすく解説するサイト」 wakari.jp のソースです。誰でも Pull Request を出せます。
 
-- Cloudflare Pages の静的サイト。HTML は `scripts/build.mjs` (Node.js 24、依存なし) が生成し、CSS は Tailwind CSS v4 (`@tailwindcss/cli`)
+- Cloudflare Pages の静的サイト。HTML は `scripts/build.mjs` (Node.js 24、依存なし) が生成し、OGP 画像は `scripts/build-ogp.mjs` (`@resvg/resvg-js`)、CSS は Tailwind CSS v4 (`@tailwindcss/cli`)
 - `data/issues.json` `data/categories.json` `data/tags.json` … 63 課題・10 カテゴリ・11 横断タグのマスターデータ
 - `content/issues/<slug>.json` … 課題ごとの解説記事。ない課題は「準備中」ページになる。スキーマは README の「記事を追加する」
 - `scripts/build.mjs` … データを検証し、`public/` に全ページ・`sitemap.xml`・`robots.txt` を生成する。検証に失敗すると exit 1
-- `public/` … 公開されるファイル。**HTML・`sitemap.xml`・`robots.txt`・`assets/styles.css` は生成物で git 管理外。手で編集しない。** 手書きは `_headers` と `assets/issues-filter.js` (/issues/ の絞り込み) だけ
+- `scripts/build-ogp.mjs` … ページごとの OGP 画像 (1200x630 PNG) を `public/ogp/` に生成する。`assets/ogp/background.svg` (背景) の上に白いカード・タイトル・サイト名・カテゴリ名を SVG で重ね、resvg で PNG にする。タイトルの折り返し (禁則) と文字サイズの調整は自前。ヘッドレスブラウザは使わない
+  - 画像のパスはページの URL から決まる: `/` → `/ogp/index.png`、`/issues/<slug>/` → `/ogp/issues/<slug>.png` (`build.mjs` の `ogImageUrl()` と同じ規則。変えるときは両方直す)
+  - 課題ページの画像に入れるのは記事の `h1` ではなく `data/issues.json` の `title`。`og:title` / `og:description` は、記事ありなら `h1` / `lead`、準備中なら `title` / `summary`
+  - `node scripts/build-ogp.mjs --list` で、全タイトルの文字サイズと折り返しを画像なしで確認できる。課題名を足したり変えたりしたら見ておく
+- `assets/ogp/background.svg` … OGP 画像の背景 (タイトルなし、オリジナル)。写真や他者の素材・ロゴを入れない
+- `assets/fonts/NotoSansJP-Bold.otf` … OGP 画像用のフォント (SIL OFL 1.1、ライセンス文は同じ場所の `OFL.txt`)。[notofonts/noto-cjk](https://github.com/notofonts/noto-cjk) の `Sans/SubsetOTF/JP/` から取得したものをそのまま置いている。CI (ubuntu-latest) には日本語フォントがないので、システムフォントには頼らない
+- `public/` … 公開されるファイル。**HTML・`sitemap.xml`・`robots.txt`・`assets/styles.css`・`ogp/` は生成物で git 管理外。手で編集しない。** 手書きは `_headers` と `assets/issues-filter.js` (/issues/ の絞り込み) だけ
 - `src/styles.css` … Tailwind の入力。クラス名は `public/` と `scripts/` から拾う
 - `stg/functions/` … stg 専用の Basic 認証ミドルウェア。stg デプロイ時だけ `./functions` にコピーされる
 - `.github/workflows/` … `ci.yml` (PR のビルド確認)、`deploy.yml` (デプロイ)。どちらも `npm run build` を実行する
@@ -41,8 +47,9 @@ AI エージェント (Claude Code / Codex など) と人間の両方に向け�
 
 ```sh
 npm ci               # 依存のインストール
-npm run build        # ページ生成 (検証つき) → CSS ビルド
+npm run build        # ページ生成 (検証つき) → OGP 画像 → CSS ビルド
 npm run build:pages  # ページ生成だけ
+npm run build:ogp    # OGP 画像だけ (public/ogp/)
 npm run dev          # ページ生成 → CSS を watch ビルド
 npm run preview      # http://localhost:8788 でプレビュー (別ターミナルで)
 ```
