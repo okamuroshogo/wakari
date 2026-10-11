@@ -20,6 +20,7 @@ const SITE = {
   description:
     "このサイトは、日本の課題を公的な統計をもとに、原因とほかの課題とのつながりまでわかりやすく解説するオープンなサイトです。",
   repo: "https://github.com/okamuroshogo/wakari",
+  operator: { name: "岡室庄悟", url: "https://okamu.ro" },
 };
 // OGP 画像の大きさ。画像そのものは scripts/build-ogp.mjs が public/ogp/ に生成する。
 const OG_IMAGE = { width: 1200, height: 630 };
@@ -480,6 +481,7 @@ function layout({
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#059669" />
+    <meta name="author" content="${esc(SITE.operator.name)}" />
     <link rel="stylesheet" href="/assets/styles.css" />
     ${ld}
   </head>
@@ -522,7 +524,10 @@ ${body}
           </ul>
         </nav>
       </div>
-      <p class="${C.container} pb-10 text-xs text-stone-500">wakari.jp — 内容はすべて GitHub で公開されています。</p>
+      <div class="${C.container} flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pb-10 text-xs text-stone-500">
+        <p>wakari.jp — 内容はすべて GitHub で公開されています。</p>
+        <p>運営 <a href="${SITE.operator.url}" rel="author" class="ml-1 hover:underline underline-offset-4">${esc(SITE.operator.name)}</a></p>
+      </div>
     </footer>
     ${scripts.map((src) => `<script src="${src}" defer></script>`).join("\n    ")}
   </body>
@@ -1240,6 +1245,9 @@ function aboutPage() {
           <a href="${CONTRIBUTE_URL}" class="${C.buttonPrimary}">記事の書き方を見る</a>
           <a href="/issues/" class="${C.buttonSecondary}">課題一覧を見る</a>
         </div>
+
+        ${h2("operator", "運営")}
+        ${p(`このサイトは、<a href="${SITE.operator.url}" rel="author" class="${C.link}">${esc(SITE.operator.name)}</a>が運営しています。`)}
       </article>`;
   addPage(
     path,
